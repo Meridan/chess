@@ -1,6 +1,7 @@
 package ru.pflb.chess;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SearchTest {
 
     @Test
+    @Ignore
     public void perftTest() {
         Board board = new Board("3kr3/K7/8/8/8/8/8/8 w - -");
         int movesNb = Search.perft(board, 2);

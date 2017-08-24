@@ -1,7 +1,5 @@
 package ru.pflb.chess;
 
-import ru.pflb.chess.exception.NotImplementedException;
-
 import java.util.List;
 
 /**
@@ -42,6 +40,6 @@ public class Search {
     }
 
     public static int alfabeta(int alfa, int beta) {
-        throw new NotImplementedException();
+        return 0;
     }
 }

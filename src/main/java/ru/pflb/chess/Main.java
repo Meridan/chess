@@ -1,5 +1,7 @@
 package ru.pflb.chess;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.pflb.chess.exception.NotImplementedException;
 
 import java.util.Scanner;
@@ -11,6 +13,8 @@ import java.util.Scanner;
  * @author <a href="mailto:8445322@gmail.com">Ivan Bonkin</a>
  */
 public class Main {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         if (args.length >= 1) {
@@ -29,6 +33,8 @@ public class Main {
             for (;;) {
                 if (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
+                    LOGGER.debug("> {}", line);
+
                     String command = line.split("\\s+")[0].toLowerCase();
                     switch (command) {
                         case "setoption":
@@ -37,6 +43,7 @@ public class Main {
                         case "ucinewgame":
                             break;
                         case "uci":
+                            LOGGER.debug("id name ChessPlayer author PFLB");
                             System.out.println("id name ChessPlayer author PFLB");
                             break;
                         case "position":
@@ -49,15 +56,17 @@ public class Main {
                                     board = new Board(parts[0]);
                                     throw new NotImplementedException("Необходимо дописать фигуры");
                                 } else {
-                                    board = new Board(nextWord);
+                                    board = new Board(nextWord.replaceAll("(^\")|(\"$)", ""));
                                 }
                             }
                             break;
                         case "isready":
+                            LOGGER.debug("< readyok");
                             System.out.println("readyok");
                             break;
                         case "go":
                             Move bestMove = Search.search(board);
+                            LOGGER.debug("< {}", bestMove.getFrom().toString() + bestMove.getTo().toString());
                             System.out.println(bestMove.getFrom().toString() + bestMove.getTo().toString());
                     }
                 }
