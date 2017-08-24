@@ -25,7 +25,6 @@ public class Board {
 
     private Color sideToMove;
 
-
     private int[][] offset = {
         // KING
         { -11, -10, -9, -1, 1,  9, 10, 11 },
@@ -146,6 +145,7 @@ public class Board {
                     for (int i = 0; i < rookPos120[pieceTo.getColor().getCode()].length; i++) {
                         if (rookPos120[pieceTo.getColor().getCode()][i] == move.getTo().getCode()) {
                             rookPos120[pieceTo.getColor().getCode()][i] = 0;
+                            rooksNb[pieceTo.getColor().getCode()] -= 1;
                             // в случае, если удалили из середины - сдвигаем все значения, оставляя нули справа
                             for (int j = i + 1; j < rookPos120[pieceTo.getColor().getCode()].length; j++) {
                                 int nextPos = rookPos120[pieceTo.getColor().getCode()][j];
@@ -167,6 +167,7 @@ public class Board {
         switch (move.getPiece().getPieceType()) {
             case KING:
                 kingPos120[sideToMove.getCode()] = move.getTo().getCode();
+                break;
             case ROOK:
                 for (int i = 0; i < rookPos120[sideToMove.getCode()].length; i++) {
                     if (rookPos120[sideToMove.getCode()][i] == move.getFrom().getCode()) {
@@ -174,6 +175,7 @@ public class Board {
                         break;
                     }
                 }
+                break;
         }
 
         sideToMove = sideToMove.getOpposite();
@@ -192,6 +194,7 @@ public class Board {
         switch (move.getPiece().getPieceType()) {
             case KING:
                 kingPos120[sideToMove.getOppositeCode()] = move.getTo().getCode();
+                break;
             case ROOK:
                 for (int i = 0; i < rookPos120[sideToMove.getOppositeCode()].length; i++) {
                     if (rookPos120[sideToMove.getOppositeCode()][i] == move.getTo().getCode()) {
@@ -199,6 +202,7 @@ public class Board {
                         break;
                     }
                 }
+                break;
         }
 
         // возвращение взятой фигуры, если была
@@ -208,9 +212,11 @@ public class Board {
                     for (int i = 0; i < rookPos120[sideToMove.getCode()].length; i++) {
                         if (rookPos120[sideToMove.getCode()][i] == 0) {
                             rookPos120[sideToMove.getCode()][i] = move.getTo().getCode();
+                            rooksNb[sideToMove.getCode()] += 1;
                             break;
                         }
                     }
+                    break;
                 default:
                     throw new NotImplementedException();
             }
