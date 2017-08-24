@@ -23,6 +23,10 @@ public class Piece {
     public static final Piece B_KING = new Piece(KING, BLACK);
     public static final Piece W_ROOK = new Piece(ROOK, WHITE);
     public static final Piece B_ROOK = new Piece(ROOK, BLACK);
+    public static final Piece W_BISHOP = new Piece(BISHOP, WHITE);
+    public static final Piece B_BISHOP = new Piece(BISHOP, BLACK);
+    public static final Piece W_QUEEN = new Piece(QUEEN, WHITE);
+    public static final Piece B_QUEEN = new Piece(QUEEN, BLACK);
 
     private final int code;
 

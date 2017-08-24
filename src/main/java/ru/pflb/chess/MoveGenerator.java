@@ -5,8 +5,7 @@ import java.util.List;
 
 import static ru.pflb.chess.Color.WHITE;
 import static ru.pflb.chess.Piece.*;
-import static ru.pflb.chess.PieceType.KING;
-import static ru.pflb.chess.PieceType.ROOK;
+import static ru.pflb.chess.PieceType.*;
 
 /**
  * @author <a href="mailto:8445322@gmail.com">Ivan Bonkin</a>.
@@ -24,6 +23,8 @@ public class MoveGenerator {
 
         moves.addAll(generateKingMoves());
         moves.addAll(generateRookMoves());
+        moves.addAll(generateBishopMoves());
+        moves.addAll(generateQueenMoves());
 
         return moves;
     }
@@ -76,5 +77,47 @@ public class MoveGenerator {
 
         return moves;
     }
+
+    public List<Move> generateBishopMoves() {
+        List<Move> moves = new ArrayList<Move>();
+        for (int r = 0; r < board.getBisNb(board.getSideToMove()); r++) {
+            int bisPos = board.getBisPos(board.getSideToMove(), r);
+            int[] offsets = board.getOffsets(BISHOP);
+
+            for (int i = 0; i < offsets.length; i++) {
+                for (int newPos = bisPos + offsets[i]; ; newPos += offsets[i]) {
+                    Piece piece = board.getPiece(newPos);
+                    if (piece.isEmpty()) {
+                        moves.add(new Move(new Square(bisPos), new Square(newPos), board.getSideToMove() == WHITE ? W_BISHOP : B_BISHOP));
+                    } else if (piece.isEnemy(board.getSideToMove())) {
+                        moves.add(new Move(new Square(bisPos), new Square(newPos), board.getSideToMove() == WHITE ? W_BISHOP : B_BISHOP, piece));
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        return moves;
+    }
+        public List<Move> generateQueenMoves() {
+            List<Move> moves = new ArrayList<Move>();
+                int quePos = board.getQuePos(board.getSideToMove());
+                int[] offsets = board.getOffsets(QUEEN);
+                for (int i = 0; i < offsets.length; i++) {
+                    for (int newPos = quePos + offsets[i]; ; newPos += offsets[i]) {
+                        Piece piece = board.getPiece(newPos);
+                        if (piece.isEmpty()) {
+                            moves.add(new Move(new Square(quePos), new Square(newPos), board.getSideToMove() == WHITE ? W_QUEEN : B_QUEEN));
+                        } else if (piece.isEnemy(board.getSideToMove())) {
+                            moves.add(new Move(new Square(quePos), new Square(newPos), board.getSideToMove() == WHITE ? W_QUEEN : B_QUEEN, piece));
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            return moves;
+        }
+
+
 
 }

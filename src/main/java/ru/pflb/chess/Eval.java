@@ -18,7 +18,8 @@ public class Eval {
         int cp = 0;
 
         cp += (board.getRooksNb(WHITE) - board.getRooksNb(BLACK)) * 500;
-        // TODO - добавить другие фигуры
+        cp += (board.getBisNb(WHITE) - board.getBisNb(BLACK)) * 300;
+        cp += (board.getQueNb(WHITE) - board.getQueNb(BLACK)) * 900;
 
         return cp;
     }

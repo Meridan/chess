@@ -6,8 +6,7 @@ import static ru.pflb.chess.Color.BLACK;
 import static ru.pflb.chess.Color.WHITE;
 import static ru.pflb.chess.Piece.EMP;
 import static ru.pflb.chess.Piece.OUT;
-import static ru.pflb.chess.PieceType.KING;
-import static ru.pflb.chess.PieceType.ROOK;
+import static ru.pflb.chess.PieceType.*;
 
 /**
  * @author <a href="mailto:8445322@gmail.com">Ivan Bonkin</a>.
@@ -20,8 +19,12 @@ public class Board {
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0}
     };
+    private int[][] bisPos120 = {{0,0},{0,0}};
+    private int[] quePos120 = {0,0};
     // число имеющихся ладей у кажой из сторон
     private int rooksNb[] = {0, 0};
+    private int bisNb[] = {0,0};
+    private int queNb[] = {0,0};
 
     private Color sideToMove;
 
@@ -29,7 +32,13 @@ public class Board {
         // KING
         { -11, -10, -9, -1, 1,  9, 10, 11 },
         // ROOK
-        { -10,  -1,  1, 10, 0,  0,  0,  0 }
+        { -10,  -1,  1, 10, 0,  0,  0,  0 },
+        //BISHOP
+        { -11,  -9,  9, 11, 0,  0,  0,  0 },
+        //QUEEN
+        { -11, -10, -9, -1, 1,  9, 10, 11 }
+
+
     };
 
     private Piece[] mailbox120 = {
@@ -66,6 +75,22 @@ public class Board {
                     }
                     rooksNb[WHITE.getCode()] += 1;
                     break;
+                case 'B':
+                    mailbox120[square] = new Piece(BISHOP, WHITE);
+                    for (int i = 0; i < bisPos120[WHITE.getCode()].length; i++) {
+                        if (bisPos120[WHITE.getCode()][i] == 0) {
+                            bisPos120[WHITE.getCode()][i] = square;
+                            break;
+                        }
+                    }
+                    bisNb[WHITE.getCode()] += 1;
+                    break;
+                case 'Q':
+                    mailbox120[square] = new Piece(QUEEN, WHITE);
+                    quePos120[WHITE.getCode()] = square;
+                    queNb[WHITE.getCode()] += 1;
+                    break;
+
                 case 'k':
                     mailbox120[square] = new Piece(KING, BLACK);
                     kingPos120[BLACK.getCode()] = square;
@@ -80,6 +105,22 @@ public class Board {
                     }
                     rooksNb[BLACK.getCode()] += 1;
                     break;
+                case 'b':
+                    mailbox120[square] = new Piece(BISHOP, BLACK);
+                    for (int i = 0; i < bisPos120[BLACK.getCode()].length; i++) {
+                        if (bisPos120[BLACK.getCode()][i] == 0) {
+                            bisPos120[BLACK.getCode()][i] = square;
+                            break;
+                        }
+                    }
+                    bisNb[BLACK.getCode()] += 1;
+                    break;
+                case 'q':
+                    mailbox120[square] = new Piece(QUEEN, BLACK);
+                    quePos120[BLACK.getCode()] = square;
+                    queNb[BLACK.getCode()] += 1;
+                    break;
+
                 case '/':
                     square -= 1;
                     break;
@@ -118,6 +159,14 @@ public class Board {
         return rookPos120[color.getCode()][index];
      }
 
+    public int getBisPos(Color color, int index) {
+        return bisPos120[color.getCode()][index];
+    }
+
+    public int getQuePos(Color color) {
+        return quePos120[color.getCode()];
+    }
+
     public int[] getOffsets(PieceType piece) {
          return offset[piece.getCode()];
      }
@@ -129,6 +178,16 @@ public class Board {
     public int getRooksNb(Color color) {
         return rooksNb[color.getCode()];
     }
+
+    public int getBisNb(Color color) {
+        return bisNb[color.getCode()];
+    }
+
+    public int getQueNb(Color color) {
+        return bisNb[color.getCode()];
+    }
+
+
 
     /**
      * Выполнение хода. Изменяет положения фигур.
@@ -157,8 +216,36 @@ public class Board {
                             break;
                         }
                     }
+                case BISHOP:
+                    for (int i = 0; i < bisPos120[pieceTo.getColor().getCode()].length; i++) {
+                        if (bisPos120[pieceTo.getColor().getCode()][i] == move.getTo().getCode()) {
+                            bisPos120[pieceTo.getColor().getCode()][i] = 0;
+                            bisNb[pieceTo.getColor().getCode()] -= 1;
+                            for (int j = i + 1; j < bisPos120[pieceTo.getColor().getCode()].length; j++) {
+                                int nextPos = bisPos120[pieceTo.getColor().getCode()][j];
+                                bisPos120[pieceTo.getColor().getCode()][j-1] = nextPos;
+                                if (nextPos == 0) {
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                case QUEEN:
+                       if (quePos120[pieceTo.getColor().getCode()] == move.getTo().getCode()) {
+                            quePos120[pieceTo.getColor().getCode()] = 0;
+                            queNb[pieceTo.getColor().getCode()] -= 1;
+                            int nextPos = quePos120[pieceTo.getColor().getCode()];
+                            quePos120[pieceTo.getColor().getCode()] = nextPos;
+                                if (nextPos == 0) {
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+
             }
-        }
+
 
         mailbox120[move.getFrom().getCode()] = EMP;
         mailbox120[move.getTo().getCode()] = move.getPiece();
@@ -176,6 +263,18 @@ public class Board {
                     }
                 }
                 break;
+            case BISHOP:
+                for (int i = 0; i < bisPos120[sideToMove.getCode()].length; i++) {
+                    if (bisPos120[sideToMove.getCode()][i] == move.getFrom().getCode()) {
+                        bisPos120[sideToMove.getCode()][i] = move.getTo().getCode();
+                        break;
+                    }
+                }
+                break;
+            case QUEEN:
+                quePos120[sideToMove.getCode()] = move.getTo().getCode();
+                break;
+
         }
 
         sideToMove = sideToMove.getOpposite();
@@ -203,6 +302,17 @@ public class Board {
                     }
                 }
                 break;
+            case BISHOP:
+                for (int i = 0; i < bisPos120[sideToMove.getOppositeCode()].length; i++) {
+                    if (bisPos120[sideToMove.getOppositeCode()][i] == move.getTo().getCode()) {
+                        bisPos120[sideToMove.getOppositeCode()][i] = move.getFrom().getCode();
+                        break;
+                    }
+                }
+                break;
+            case QUEEN:
+                quePos120[sideToMove.getOppositeCode()] = move.getTo().getCode();
+                break;
         }
 
         // возвращение взятой фигуры, если была
@@ -215,6 +325,23 @@ public class Board {
                             rooksNb[sideToMove.getCode()] += 1;
                             break;
                         }
+                    }
+                    break;
+                case BISHOP:
+                    for (int i = 0; i < bisPos120[sideToMove.getCode()].length; i++) {
+                        if (bisPos120[sideToMove.getCode()][i] == 0) {
+                            bisPos120[sideToMove.getCode()][i] = move.getTo().getCode();
+                            bisNb[sideToMove.getCode()] += 1;
+                            break;
+                        }
+                    }
+                    break;
+                case QUEEN:
+                    if (quePos120[sideToMove.getCode()] == 0) {
+                        quePos120[sideToMove.getCode()] = move.getTo().getCode();
+                        queNb[sideToMove.getCode()] += 1;
+                        break;
+
                     }
                     break;
                 default:
