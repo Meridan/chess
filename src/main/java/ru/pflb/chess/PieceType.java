@@ -5,7 +5,7 @@ package ru.pflb.chess;
  */
 public enum PieceType {
 
-    KING(0), ROOK(1);
+    KING(0), ROOK(1), BISHOP(2), QUEEN(3), KNIGHT(4), PAWN(5);
 
     private final int code;
 

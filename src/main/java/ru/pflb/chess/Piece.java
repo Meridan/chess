@@ -2,8 +2,7 @@ package ru.pflb.chess;
 
 import static ru.pflb.chess.Color.BLACK;
 import static ru.pflb.chess.Color.WHITE;
-import static ru.pflb.chess.PieceType.KING;
-import static ru.pflb.chess.PieceType.ROOK;
+import static ru.pflb.chess.PieceType.*;
 
 /**
  * @author <a href="mailto:8445322@gmail.com">Ivan Bonkin</a>.
@@ -61,6 +60,18 @@ public class Piece {
             case 2:
             case 8:
                 return ROOK;
+            case 3:
+            case 9:
+                return BISHOP;
+            case 4:
+            case 10:
+                return QUEEN;
+            case 5:
+            case 11:
+                return KNIGHT;
+            case 6:
+            case 12:
+                return PAWN;
             default:
                 return null;
         }
