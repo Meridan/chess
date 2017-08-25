@@ -12,9 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SearchTest {
 
     @Test
-    @Ignore
+    //@Ignore
     public void perftTest() {
-        Board board = new Board("3kr3/Kr6/8/8/8/8/8/8 w - -");
+        Board board = new Board("3k4/K7/8/8/8/8/8/8 w - -");
         int movesNb = Search.perft(board, 2);
 
         assertThat(movesNb).isEqualTo(65);

@@ -280,6 +280,28 @@ public class Board {
         sideToMove = sideToMove.getOpposite();
     }
 
+    public boolean isCheck(Move move) {
+        int[] offsets = getOffsets(KING);
+        switch (move.getPiece().getPieceType()) {
+        case KING:
+            for (int i = 0; i < offsets.length; i++) {
+                if ((getKingPos(getSideToMove()) + offsets[i]) == getKingPos(getSideToMove().getOpposite())) {
+                    return true;
+                }
+                break;
+                for (int j = 0; j < rookPos120.length; j++) {
+                if (getRookPos((getSideToMove().getOpposite()),j) ==(getKingPos(getSideToMove()) + offsets[j])  ) {
+                    return true;
+                }
+                break;
+            }
+        case ROOK:
+            for (int i = 0; i < offsets.length; i++) {
+                if ()
+
+
+    }
+    }
     /**
      * Отмена выполненного хода. Изменяет положения фигур.
      *
@@ -292,7 +314,7 @@ public class Board {
         // обновление массивов быстрого доступа
         switch (move.getPiece().getPieceType()) {
             case KING:
-                kingPos120[sideToMove.getOppositeCode()] = move.getTo().getCode();
+                kingPos120[sideToMove.getOppositeCode()] = move.getFrom().getCode();
                 break;
             case ROOK:
                 for (int i = 0; i < rookPos120[sideToMove.getOppositeCode()].length; i++) {
