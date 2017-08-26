@@ -298,18 +298,19 @@ public class Board {
 
         sideToMove = sideToMove.getOpposite();
     }
-
+    //Проверка на шах
     public boolean isCheck(Move move) {
         boolean check = false;
         int[] offsets = getOffsets(KING);
         if (move.getPiece().getPieceType()==KING) {
             for (int k = 0; k < offsets.length; k++) {
+                //Проверка на шах от короля
                 if ((getKingPos(getSideToMove()) + offsets[k]) == getKingPos(getSideToMove().getOpposite())) {
                     check = true;
                     break;
                 }
+                //Проверка на шах от ладьи
                 int[] offsetsR = getOffsets(ROOK);
-
                 for (int i = 0; i < offsetsR.length; i++) {
                     for (int newPos = (getKingPos(getSideToMove())) + offsetsR[i]; ; newPos += offsetsR[i]) {
                         Piece piece = getPiece(newPos);
@@ -319,9 +320,9 @@ public class Board {
                         }
                     }
                 }
+                //Проверка на шах от слона
                 int[] offsetsB = getOffsets(BISHOP);
-
-                for (int i = 0; i < offsetsR.length; i++) {
+                for (int i = 0; i < offsetsB.length; i++) {
                     for (int newPos = (getKingPos(getSideToMove())) + offsetsB[i]; ; newPos += offsetsB[i]) {
                         Piece piece = getPiece(newPos);
                         if (piece.isEnemy(getSideToMove()) && piece.getPieceType() == BISHOP) {
@@ -330,17 +331,17 @@ public class Board {
                         }
                     }
                 }
+                //Проверка на шах от ферзя
                 int[] offsetsQ = getOffsets(QUEEN);
-
                 for (int i = 0; i < offsetsR.length; i++) {
-                    for (int newPos = (getKingPos(getSideToMove())) + offsetsR[i]; ; newPos += offsetsR[i]) {
+                    for (int newPos = (getKingPos(getSideToMove())) + offsetsQ[i]; ; newPos += offsetsQ[i]) {
                         Piece piece = getPiece(newPos);
                         if (piece.isEnemy(getSideToMove()) && piece.getPieceType() == QUEEN) {
                             check = true;
                             break;
                         }
                     }
-                }            }
+                } }
         }
     return check;
     }
