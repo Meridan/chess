@@ -20,7 +20,7 @@ public class Board {
             {0,0,0,0,0,0,0,0,0,0}
     };
     private int[][] bisPos120 = {{0,0},{0,0}};
-    private int[] quePos120 = {0,0};
+    private int[][] quePos120 = {{0,0},{0,0}};
     // число имеющихся ладей у кажой из сторон
     private int rooksNb[] = {0, 0};
     private int bisNb[] = {0,0};
@@ -87,7 +87,12 @@ public class Board {
                     break;
                 case 'Q':
                     mailbox120[square] = new Piece(QUEEN, WHITE);
-                    quePos120[WHITE.getCode()] = square;
+                    for (int i = 0; i < quePos120[WHITE.getCode()].length; i++) {
+                        if (quePos120[WHITE.getCode()][i] == 0) {
+                            quePos120[WHITE.getCode()][i] = square;
+                            break;
+                        }
+                    }
                     queNb[WHITE.getCode()] += 1;
                     break;
 
@@ -117,7 +122,12 @@ public class Board {
                     break;
                 case 'q':
                     mailbox120[square] = new Piece(QUEEN, BLACK);
-                    quePos120[BLACK.getCode()] = square;
+                    for (int i = 0; i < quePos120[BLACK.getCode()].length; i++) {
+                    if (quePos120[BLACK.getCode()][i] == 0) {
+                        quePos120[BLACK.getCode()][i] = square;
+                        break;
+                        }
+                    }
                     queNb[BLACK.getCode()] += 1;
                     break;
 
@@ -163,8 +173,8 @@ public class Board {
         return bisPos120[color.getCode()][index];
     }
 
-    public int getQuePos(Color color) {
-        return quePos120[color.getCode()];
+    public int getQuePos(Color color, int index) {
+        return quePos120[color.getCode()][index];
     }
 
     public int[] getOffsets(PieceType piece) {
@@ -184,7 +194,7 @@ public class Board {
     }
 
     public int getQueNb(Color color) {
-        return bisNb[color.getCode()];
+        return queNb[color.getCode()];
     }
 
 
@@ -232,16 +242,20 @@ public class Board {
                         }
                     }
                 case QUEEN:
-                       if (quePos120[pieceTo.getColor().getCode()] == move.getTo().getCode()) {
-                            quePos120[pieceTo.getColor().getCode()] = 0;
+                    for (int i = 0; i < quePos120[pieceTo.getColor().getCode()].length; i++) {
+                        if (quePos120[pieceTo.getColor().getCode()][i] == move.getTo().getCode()) {
+                            quePos120[pieceTo.getColor().getCode()][i] = 0;
                             queNb[pieceTo.getColor().getCode()] -= 1;
-                            int nextPos = quePos120[pieceTo.getColor().getCode()];
-                            quePos120[pieceTo.getColor().getCode()] = nextPos;
+                            for (int j = i + 1; j < quePos120[pieceTo.getColor().getCode()].length; j++) {
+                                int nextPos = quePos120[pieceTo.getColor().getCode()][j];
+                                quePos120[pieceTo.getColor().getCode()][j-1] = nextPos;
                                 if (nextPos == 0) {
                                     break;
                                 }
                             }
                             break;
+                        }
+                    }
                         }
 
             }
@@ -272,7 +286,12 @@ public class Board {
                 }
                 break;
             case QUEEN:
-                quePos120[sideToMove.getCode()] = move.getTo().getCode();
+                for (int i = 0; i < quePos120[sideToMove.getCode()].length; i++) {
+                    if (quePos120[sideToMove.getCode()][i] == move.getFrom().getCode()) {
+                        quePos120[sideToMove.getCode()][i] = move.getTo().getCode();
+                        break;
+                    }
+                }
                 break;
 
         }
@@ -281,27 +300,52 @@ public class Board {
     }
 
     public boolean isCheck(Move move) {
+        boolean check = false;
         int[] offsets = getOffsets(KING);
-        switch (move.getPiece().getPieceType()) {
-        case KING:
-            for (int i = 0; i < offsets.length; i++) {
-                if ((getKingPos(getSideToMove()) + offsets[i]) == getKingPos(getSideToMove().getOpposite())) {
-                    return true;
+        if (move.getPiece().getPieceType()==KING) {
+            for (int k = 0; k < offsets.length; k++) {
+                if ((getKingPos(getSideToMove()) + offsets[k]) == getKingPos(getSideToMove().getOpposite())) {
+                    check = true;
+                    break;
                 }
-                break;
-                for (int j = 0; j < rookPos120.length; j++) {
-                if (getRookPos((getSideToMove().getOpposite()),j) ==(getKingPos(getSideToMove()) + offsets[j])  ) {
-                    return true;
+                int[] offsetsR = getOffsets(ROOK);
+
+                for (int i = 0; i < offsetsR.length; i++) {
+                    for (int newPos = (getKingPos(getSideToMove())) + offsetsR[i]; ; newPos += offsetsR[i]) {
+                        Piece piece = getPiece(newPos);
+                        if (piece.isEnemy(getSideToMove()) && piece.getPieceType() == ROOK) {
+                            check = true;
+                            break;
+                        }
+                    }
                 }
-                break;
-            }
-        case ROOK:
-            for (int i = 0; i < offsets.length; i++) {
-                if ()
+                int[] offsetsB = getOffsets(BISHOP);
+
+                for (int i = 0; i < offsetsR.length; i++) {
+                    for (int newPos = (getKingPos(getSideToMove())) + offsetsB[i]; ; newPos += offsetsB[i]) {
+                        Piece piece = getPiece(newPos);
+                        if (piece.isEnemy(getSideToMove()) && piece.getPieceType() == BISHOP) {
+                            check = true;
+                            break;
+                        }
+                    }
+                }
+                int[] offsetsQ = getOffsets(QUEEN);
+
+                for (int i = 0; i < offsetsR.length; i++) {
+                    for (int newPos = (getKingPos(getSideToMove())) + offsetsR[i]; ; newPos += offsetsR[i]) {
+                        Piece piece = getPiece(newPos);
+                        if (piece.isEnemy(getSideToMove()) && piece.getPieceType() == QUEEN) {
+                            check = true;
+                            break;
+                        }
+                    }
+                }            }
+        }
+    return check;
+    }
 
 
-    }
-    }
     /**
      * Отмена выполненного хода. Изменяет положения фигур.
      *
@@ -333,7 +377,12 @@ public class Board {
                 }
                 break;
             case QUEEN:
-                quePos120[sideToMove.getOppositeCode()] = move.getTo().getCode();
+                for (int i = 0; i < quePos120[sideToMove.getOppositeCode()].length; i++) {
+                    if (quePos120[sideToMove.getOppositeCode()][i] == move.getTo().getCode()) {
+                        quePos120[sideToMove.getOppositeCode()][i] = move.getFrom().getCode();
+                        break;
+                    }
+                }
                 break;
         }
 
@@ -359,11 +408,12 @@ public class Board {
                     }
                     break;
                 case QUEEN:
-                    if (quePos120[sideToMove.getCode()] == 0) {
-                        quePos120[sideToMove.getCode()] = move.getTo().getCode();
-                        queNb[sideToMove.getCode()] += 1;
-                        break;
-
+                    for (int i = 0; i < quePos120[sideToMove.getCode()].length; i++) {
+                        if (quePos120[sideToMove.getCode()][i] == 0) {
+                            quePos120[sideToMove.getCode()][i] = move.getTo().getCode();
+                            queNb[sideToMove.getCode()] += 1;
+                            break;
+                        }
                     }
                     break;
                 default:

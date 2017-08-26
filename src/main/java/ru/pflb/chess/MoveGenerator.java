@@ -99,22 +99,25 @@ public class MoveGenerator {
         }
         return moves;
     }
-        public List<Move> generateQueenMoves() {
-            List<Move> moves = new ArrayList<Move>();
-                int quePos = board.getQuePos(board.getSideToMove());
-                int[] offsets = board.getOffsets(QUEEN);
-                for (int i = 0; i < offsets.length; i++) {
-                    for (int newPos = quePos + offsets[i]; ; newPos += offsets[i]) {
-                        Piece piece = board.getPiece(newPos);
-                        if (piece.isEmpty()) {
-                            moves.add(new Move(new Square(quePos), new Square(newPos), board.getSideToMove() == WHITE ? W_QUEEN : B_QUEEN));
-                        } else if (piece.isEnemy(board.getSideToMove())) {
-                            moves.add(new Move(new Square(quePos), new Square(newPos), board.getSideToMove() == WHITE ? W_QUEEN : B_QUEEN, piece));
-                        } else {
-                            break;
-                        }
+    public List<Move> generateQueenMoves() {
+        List<Move> moves = new ArrayList<Move>();
+        for (int r = 0; r < board.getQueNb(board.getSideToMove()); r++) {
+            int quePos = board.getQuePos(board.getSideToMove(), r);
+            int[] offsets = board.getOffsets(QUEEN);
+
+            for (int i = 0; i < offsets.length; i++) {
+                for (int newPos = quePos + offsets[i]; ; newPos += offsets[i]) {
+                    Piece piece = board.getPiece(newPos);
+                    if (piece.isEmpty()) {
+                        moves.add(new Move(new Square(quePos), new Square(newPos), board.getSideToMove() == WHITE ? W_QUEEN : B_QUEEN));
+                    } else if (piece.isEnemy(board.getSideToMove())) {
+                        moves.add(new Move(new Square(quePos), new Square(newPos), board.getSideToMove() == WHITE ? W_QUEEN : B_QUEEN, piece));
+                    } else {
+                        break;
                     }
                 }
+            }
+        }
             return moves;
         }
 
